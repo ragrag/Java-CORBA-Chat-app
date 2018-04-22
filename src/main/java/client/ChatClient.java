@@ -7,6 +7,7 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import chat.Chat;
 import chat.ChatHelper;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,16 +37,16 @@ public class ChatClient
     static final String CMD_NAME   = CMD_PREFIX + "name ";
     static final String CMD_QUIT   = CMD_PREFIX + "quit";
 
-    static Chat connImpl;
+    static Chat chatImpl;
     static String token;
+   static JFrame frame = new JFrame();
 
     public static class Input implements Runnable {
  
     	
     	 private void initUI() {
-    	        JFrame frame = new JFrame();
-    	        BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
-                frame.setLayout(boxLayout);
+    	  
+    	   
 
     	        final JTextField textfield = new JTextField(20);
     	        
@@ -59,16 +60,13 @@ public class ChatClient
     	        JButton roomListBtn = new JButton("Room List");
     	        
     	        JTextField nameField = new JTextField(20);
-    	        nameField.setText(connImpl.getName(token));
+    	        nameField.setText(chatImpl.getName(token));
     	        JButton nameBtn = new JButton("Change Name");
     	        JButton helpBtn = new JButton("View Commands");
-    	        JButton quitBtn = new JButton("Exot");
+    	        JButton quitBtn = new JButton("Exit");
     	        
     	        
-    	        
-    	        
-    	        
-    	    
+    
     	        
     	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	        frame.add( new JLabel("Input" ) );
@@ -86,7 +84,7 @@ public class ChatClient
     	        frame.add(nameBtn);
     	        frame.add(helpBtn);
     	        frame.add(quitBtn);  	        
-    	        frame.setSize(300, 400);
+    
     	        frame.setVisible(true);
     	        
     	        
@@ -114,7 +112,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+		        	if(createRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+    	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		else 
+    	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+    	        	  }
     	          }
     	        });
     	        
@@ -123,7 +128,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+    	        	  if(joinRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.joinChatRoom(token, joinRoom.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Joined Room "+ createRoom.getText() + "!");
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        	  }
     	          }
     	        });
     	        
@@ -131,7 +143,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+    	        	  if(createRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        	  }
     	          }
     	        });
     	        
@@ -139,7 +158,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+    	        	  if(createRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        	  }
     	          }
     	        });
     	        
@@ -147,7 +173,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+    	        	  if(createRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        	  }
     	          }
     	        });
     	        
@@ -155,7 +188,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+    	        	  if(createRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        	  }
     	          }
     	        });
     	        
@@ -163,7 +203,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	           JOptionPane.showMessageDialog(null, "test");
+    	        	  if(createRoom.getText().equals(""))
+		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
+		        	else {
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        	  }
     	          }
     	        });
     	        
@@ -185,23 +232,23 @@ public class ChatClient
         void parse(String str) {
             if (str.startsWith(CMD_CREATE)) {
                 String name = str.substring(CMD_CREATE.length());
-                connImpl.createChatRoom(token, name);
+                chatImpl.createChatRoom(token, name);
             } else if (str.startsWith(CMD_LIST)) {
-                connImpl.listChatRooms(token);
+                chatImpl.listChatRooms(token);
             } else if (str.startsWith(CMD_JOIN)) {
                 String name = str.substring(CMD_JOIN.length());
-                connImpl.joinChatRoom(token, name);
+                chatImpl.joinChatRoom(token, name);
             } else if (str.startsWith(CMD_LEAVE)) {
-                connImpl.leaveChatRoom(token);
+                chatImpl.leaveChatRoom(token);
             } else if (str.startsWith(CMD_HELP)) {
                 help();
             } else if (str.startsWith(CMD_NAME)) {
                 String name = str.substring(CMD_NAME.length());
-                connImpl.changeName(token, name);
+                chatImpl.changeName(token, name);
             } else if (str.startsWith(CMD_QUIT)) {
                 System.exit(0);
             } else {
-                connImpl.sendMessage(token, str);
+                chatImpl.sendMessage(token, str);
             }
         }
 
@@ -224,10 +271,7 @@ public class ChatClient
         	
         
             
-           	JFrame frame = new JFrame();
-        	BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
-            frame.setLayout(boxLayout);
-
+    
 
             JTextArea ta = new JTextArea();
             TextAreaOutputStream taos = new TextAreaOutputStream( ta, 60 );
@@ -235,15 +279,19 @@ public class ChatClient
             System.setOut( ps );
             System.setErr( ps );
 
+
             
-            frame.add( new JLabel(" Output" ) );
-            frame.add( new JScrollPane (ta)  );
+            frame.add( new JLabel("Output" ) );
+            JScrollPane sp=  new JScrollPane (ta);
+            sp.setPreferredSize(new Dimension(40,599));
+           
+            frame.add(sp  );
 
             frame.pack();
             frame.setVisible( true );
-            frame.setSize(800,600);        	
+            frame.setSize(300,600);        	
             while(true) {
-                String message = connImpl.receiveMessage(token);
+                String message = chatImpl.receiveMessage(token);
                 if (!message.isEmpty()) {
                     System.out.println(message);
                 } else {
@@ -260,7 +308,8 @@ public class ChatClient
     public static void main(String args[])
     {
     	
-    	
+        BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
+        frame.setLayout(boxLayout);
         try{
             // create and initialize the ORB
             ORB orb = ORB.init(args, null);
@@ -275,10 +324,10 @@ public class ChatClient
 
             // resolve the Object Reference in Naming
             String name = "Conn";
-            connImpl = ChatHelper.narrow(ncRef.resolve_str(name));
+            chatImpl = ChatHelper.narrow(ncRef.resolve_str(name));
 
-            System.out.println("Obtained a handle on server object: " + connImpl);
-            token = connImpl.connect();
+            System.out.println("Obtained a handle on server object: " + chatImpl);
+            token = chatImpl.connect();
 
             new Thread(new Input()).start();
             new Thread(new Output()).start();
