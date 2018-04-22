@@ -57,17 +57,19 @@ class ChatImpl extends ChatPOA {
         }
     }
 
-    public void createChatRoom(String token, String name) {
+    public boolean createChatRoom(String token, String name) {
         User user = server.getUser(token);
         if (user != null) {
             server.addChatRoom(name);
             user.addMessage("Notice: Created " + name + ".");
+            return true;
         } else {
             System.out.println("Invalid token given for creating chat room.");
+            return false;
         }
     }
 
-    public void listChatRooms(String token) {
+    public boolean listChatRooms(String token) {
         User user = server.getUser(token);
         if (user != null) {
             ArrayList<String> chatNames = server.getChatRooms();
@@ -76,45 +78,54 @@ class ChatImpl extends ChatPOA {
                 str += chatName + "\n";
             }
             user.addMessage(str.substring(0, str.length()-1));
+            return true;
         } else {
             System.out.println("Invalid token given for listing chat rooms.");
+            return false;
         }
     }
 
-    public void joinChatRoom(String token, String name) {
+    public boolean joinChatRoom(String token, String name) {
         User user = server.getUser(token);
         if (user != null) {
             ChatRoom chatRoom = server.getChatRoom(name);
             if (chatRoom != null) {
                 user.addMessage("Notice: Joined " + name +  ".");
                 chatRoom.addUser(user);
+                return true;
             } else {
                 user.addMessage("Error: The specified channel does not exist.");
+                return false;
             }
         } else {
             System.out.println("Invalid token given for joining chat room.");
+            return false;
         }
     }
 
-    public void leaveChatRoom(String token) {
+    public boolean leaveChatRoom(String token) {
         User user = server.getUser(token);
         if (user != null) {
             String chatName = user.getChatRoom();
             ChatRoom chatRoom = server.getChatRoom(chatName);
             chatRoom.removeUser(user);
             user.addMessage("Notice: Left " + chatName +  ".");
+            return true;
         } else {
             System.out.println("Invalid token given for leaving chat room.");
+            return false;
         }
     }
 
-    public void changeName(String token, String name) {
+    public boolean changeName(String token, String name) {
         User user = server.getUser(token);
         if (user != null) {
             user.setName(name);
             user.addMessage("Notice: Changed name to " + name +  ".");
+            return true;
         } else {
             System.out.println("Invalid token given for changing name.");
+            return false;
         }
     }
 

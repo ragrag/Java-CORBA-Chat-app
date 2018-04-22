@@ -5,11 +5,11 @@ module chat
         string connect();
         void sendMessage(in string token, in string message);
         string receiveMessage(in string token);
-        void createChatRoom(in string token, in string name);
-        void listChatRooms(in string token);
-        void joinChatRoom(in string token, in string name);
-        void leaveChatRoom(in string token);
-        void changeName(in string token, in string name);
+        boolean createChatRoom(in string token, in string name);
+        boolean listChatRooms(in string token);
+        boolean joinChatRoom(in string token, in string name);
+        boolean leaveChatRoom(in string token);
+        boolean changeName(in string token, in string name);
         string getName(in string token);
     };
 };
