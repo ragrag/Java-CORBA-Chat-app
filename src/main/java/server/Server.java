@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
-    static final String DEFAULT_NAME = "Anonymous";
+    static final String DEFAULT_NAME = "User";
 
     ReadWriteLock lock = new ReentrantReadWriteLock();
     HashMap<String, User> users = new HashMap<String, User>();

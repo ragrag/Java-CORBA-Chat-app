@@ -10,6 +10,7 @@ import chat.ChatHelper;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
@@ -53,42 +54,27 @@ public class ChatClient
     	        
     	        JLabel curRoom = new JLabel("Current Room : None");
     	        curRoom.setForeground(Color.red);
-    	        JTextField createRoom = new JTextField(20);
-    	        createRoom.setToolTipText("Enter room name ");
+    	        JLabel curName= new JLabel();
+    	        curName.setText("Current name : " + chatImpl.getName(token));
     	        JButton createBtn = new JButton("Create Room");
-    	        JTextField joinRoom = new JTextField(20);
-    	        joinRoom.setToolTipText("Room name to join");
     	        JButton joinBtn = new JButton("Join Room");
     	        JButton leaveBtn = new JButton("leave Room");
     	        JButton roomListBtn = new JButton("Room List");
-    	        
-    	        JTextField nameField = new JTextField(20);
-    	        nameField.setText(chatImpl.getName(token));
     	        JButton nameBtn = new JButton("Change Name");
-    	        JButton helpBtn = new JButton("View Commands");
-    	        JButton quitBtn = new JButton("Exit");
+
     	        
-    	        
-    
-    	        
-    	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	        frame.add( curRoom);
-    	        frame.add( new JLabel("Input" ) );
+       	        frame.add( curName);
+    	        JLabel enterMsg = new JLabel("Enter a message");
+    	        enterMsg.setFont(new Font("Verdana", Font.ITALIC,12));
+    	        frame.add( enterMsg );
     	        frame.add(textfield);
-    	        frame.add( new JLabel(" Create a Room" ) );
-    	        frame.add(createRoom);
+    	        frame.add(nameBtn);
     	        frame.add(createBtn);
-    	        frame.add( new JLabel(" Join a Room" ) );
-    	        frame.add(joinRoom);
-    	        frame.add(joinBtn);
+    	        frame.add( joinBtn );
     	        frame.add(leaveBtn);
     	        frame.add(roomListBtn);
-    	        frame.add( new JLabel("Name" ) );
-      	        frame.add(nameField);
-    	        frame.add(nameBtn);
-    	        frame.add(helpBtn);
-    	        frame.add(quitBtn);  	        
-    
+    	        frame.setSize(400,600 );
     	        frame.setVisible(true);
     	        
     	        
@@ -100,7 +86,7 @@ public class ChatClient
     	                try {
     	                    String text = textfield.getText();
     	                    InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
-    	                    parse(text);
+    	                    chatImpl.sendMessage(token, text);
     	                    textfield.setText("");
     	                    System.err.println(text);
     	                } catch (UnsupportedEncodingException e1) {
@@ -116,12 +102,14 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-		        	if(createRoom.getText().equals(""))
+    	        	  String input;
+    	        	  input = JOptionPane.showInputDialog("Enter Room Name");
+    	        	  
+		        	if(input.equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  {
-    	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
-    	        		createRoom.setText("");
+		        		if(chatImpl.createChatRoom(token, input))  {
+    	        		JOptionPane.showMessageDialog(null, "Room "+ input + " Created!");
 		        		}
 		        		else 
     	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
@@ -134,16 +122,18 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	        	  if(joinRoom.getText().equals(""))
+    	        	  String input;
+    	        	  input = JOptionPane.showInputDialog("Enter Room Name");
+    	        	  
+    	        	  if(input.equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.joinChatRoom(token, joinRoom.getText())) 
+		        		if(chatImpl.joinChatRoom(token, input)) 
 		        		{
 		        			
-  	        		JOptionPane.showMessageDialog(null, "Joined Room "+ createRoom.getText() + "!");
-  	        		curRoom.setText("Current Room : "+joinRoom.getText());
+  	        		JOptionPane.showMessageDialog(null, "Joined Room "+ input + "!");
+  	        		curRoom.setText("Current Room : "+input);
   	        		curRoom.setForeground(Color.green);
-  	        		joinRoom.setText("");
 		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
@@ -179,11 +169,16 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	        	  if(createRoom.getText().equals(""))
+    	        	  
+    	        	  String input;
+    	        	  input = JOptionPane.showInputDialog("Enter New Name");
+    	        	  if(input.equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.changeName(token, nameField.getText()))  
-  	        		JOptionPane.showMessageDialog(null, "Name Changed to " + nameField.getText());
+		        		if(chatImpl.changeName(token, input))  {
+  	        		JOptionPane.showMessageDialog(null, "Name Changed to " + input);
+  	        		curName.setText("Current Name : "+chatImpl.getName(token));
+		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
   	        	  }
@@ -193,52 +188,22 @@ public class ChatClient
     	    }
     	
         public void run() {
+        	try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	initUI();
         }
 
-        void parse(String str) {
-            if (str.startsWith(CMD_CREATE)) {
-                String name = str.substring(CMD_CREATE.length());
-                chatImpl.createChatRoom(token, name);
-            } else if (str.startsWith(CMD_LIST)) {
-                chatImpl.listChatRooms(token);
-            } else if (str.startsWith(CMD_JOIN)) {
-                String name = str.substring(CMD_JOIN.length());
-                chatImpl.joinChatRoom(token, name);
-            } else if (str.startsWith(CMD_LEAVE)) {
-                chatImpl.leaveChatRoom(token);
-            } else if (str.startsWith(CMD_HELP)) {
-                help();
-            } else if (str.startsWith(CMD_NAME)) {
-                String name = str.substring(CMD_NAME.length());
-                chatImpl.changeName(token, name);
-            } else if (str.startsWith(CMD_QUIT)) {
-                System.exit(0);
-            } else {
-                chatImpl.sendMessage(token, str);
-            }
-        }
-
-        void help() {
-            String str = "Commands:\n" +
-                    CMD_CREATE + "\n" +
-                    CMD_LIST + "\n" +
-                    CMD_JOIN + "\n" +
-                    CMD_LEAVE + "\n" +
-                    CMD_HELP + "\n" +
-                    CMD_NAME + "\n" +
-                    CMD_QUIT;
-            System.out.println(str);
-        }
+   
+     
     }
 
     public static class Output implements Runnable {
 
         public void run() {
-        	
-        
-            
-    
 
             JTextArea ta = new JTextArea();
             TextAreaOutputStream taos = new TextAreaOutputStream( ta, 60 );
@@ -246,17 +211,12 @@ public class ChatClient
             System.setOut( ps );
             System.setErr( ps );
 
-
-            
             frame.add( new JLabel("Output" ) );
             JScrollPane sp=  new JScrollPane (ta);
-            sp.setPreferredSize(new Dimension(40,599));
-           
-            frame.add(sp  );
-
+            sp.setPreferredSize(new Dimension(40,300));
+            frame.add( sp  );
             frame.pack();
-            frame.setVisible( true );
-            frame.setSize(300,600);        	
+
             while(true) {
                 String message = chatImpl.receiveMessage(token);
                 if (!message.isEmpty()) {
@@ -277,6 +237,7 @@ public class ChatClient
     	
         BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
         frame.setLayout(boxLayout);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try{
             // create and initialize the ORB
             ORB orb = ORB.init(args, null);
@@ -295,9 +256,10 @@ public class ChatClient
 
             System.out.println("Obtained a handle on server object: " + chatImpl);
             token = chatImpl.connect();
-
-            new Thread(new Input()).start();
+            
             new Thread(new Output()).start();
+            new Thread(new Input()).start();
+           
 
         } catch (Exception e) {
             System.out.println("ERROR : " + e) ;
