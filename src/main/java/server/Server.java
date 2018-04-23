@@ -3,13 +3,13 @@ package server;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
     static final String DEFAULT_NAME = "User";
+    static int userCounter = 1;
 
     ReadWriteLock lock = new ReentrantReadWriteLock();
     HashMap<String, User> users = new HashMap<String, User>();
@@ -33,7 +33,6 @@ public class Server {
     public void removeChatRoom(String name) {
         lock.writeLock().lock();
         ChatRoom chatRoom = chatRooms.remove(name);
-        chatRoom.expire();
         lock.writeLock().unlock();
     }
 
@@ -47,7 +46,7 @@ public class Server {
     public String addUser() {
         lock.writeLock().lock();
         String token = randomString();
-        User user = new User(token, DEFAULT_NAME);
+        User user = new User(token, DEFAULT_NAME + userCounter++ );
         users.put(user.getToken(), user);
         lock.writeLock().unlock();
         return token;

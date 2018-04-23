@@ -56,7 +56,7 @@ public class User {
     public String getMessage() {
         lock.writeLock().lock();
         String message = messages.poll();
-        lock.writeLock().lock();
+        lock.writeLock().unlock();
         return message;
     }
 }

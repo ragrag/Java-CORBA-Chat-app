@@ -30,18 +30,11 @@ import javax.swing.JTextField;
 
 public class ChatClient
 {
-    static final String CMD_PREFIX = "/";
-    static final String CMD_CREATE = CMD_PREFIX + "create ";
-    static final String CMD_LIST   = CMD_PREFIX + "list";
-    static final String CMD_JOIN   = CMD_PREFIX + "join ";
-    static final String CMD_LEAVE  = CMD_PREFIX + "leave";
-    static final String CMD_HELP   = CMD_PREFIX + "help";
-    static final String CMD_NAME   = CMD_PREFIX + "name ";
-    static final String CMD_QUIT   = CMD_PREFIX + "quit";
+
 
     static Chat chatImpl;
     static String token;
-   static JFrame frame = new JFrame();
+    static JFrame frame = new JFrame();
 
     public static class Input implements Runnable {
  
@@ -54,8 +47,10 @@ public class ChatClient
     	        
     	        JLabel curRoom = new JLabel("Current Room : None");
     	        curRoom.setForeground(Color.red);
+    	        curRoom.setFont(new Font("Verdana", Font.BOLD,15));
     	        JLabel curName= new JLabel();
     	        curName.setText("Current name : " + chatImpl.getName(token));
+    	        curName.setFont(new Font("Verdana", Font.BOLD,15));
     	        JButton createBtn = new JButton("Create Room");
     	        JButton joinBtn = new JButton("Join Room");
     	        JButton leaveBtn = new JButton("leave Room");
@@ -66,7 +61,7 @@ public class ChatClient
     	        frame.add( curRoom);
        	        frame.add( curName);
     	        JLabel enterMsg = new JLabel("Enter a message");
-    	        enterMsg.setFont(new Font("Verdana", Font.ITALIC,12));
+    	        enterMsg.setFont(new Font("Verdana", Font.ITALIC,13));
     	        frame.add( enterMsg );
     	        frame.add(textfield);
     	        frame.add(nameBtn);
@@ -86,8 +81,11 @@ public class ChatClient
     	                try {
     	                    String text = textfield.getText();
     	                    InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
-    	                    chatImpl.sendMessage(token, text);
-    	                    textfield.setText("");
+    	                    if(!text.equals(""))
+    	                    {	
+    	                    	chatImpl.sendMessage(token, text);
+    	                    	textfield.setText("");
+    	                    }
     	                    System.err.println(text);
     	                } catch (UnsupportedEncodingException e1) {
     	                    e1.printStackTrace();
@@ -133,7 +131,7 @@ public class ChatClient
 		        			
   	        		JOptionPane.showMessageDialog(null, "Joined Room "+ input + "!");
   	        		curRoom.setText("Current Room : "+input);
-  	        		curRoom.setForeground(Color.green);
+  	        		curRoom.setForeground(new Color(0,160,0));
 		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
@@ -218,6 +216,7 @@ public class ChatClient
             frame.pack();
 
             while(true) {
+
                 String message = chatImpl.receiveMessage(token);
                 if (!message.isEmpty()) {
                     System.out.println(message);
@@ -225,10 +224,12 @@ public class ChatClient
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
+                    	System.out.println("ex");
                         e.printStackTrace();
                     }
                 }
             }
+          
         }
     }
 
@@ -254,7 +255,7 @@ public class ChatClient
             String name = "Conn";
             chatImpl = ChatHelper.narrow(ncRef.resolve_str(name));
 
-            System.out.println("Obtained a handle on server object: " + chatImpl);
+            System.out.println("Connected ");
             token = chatImpl.connect();
             
             new Thread(new Output()).start();

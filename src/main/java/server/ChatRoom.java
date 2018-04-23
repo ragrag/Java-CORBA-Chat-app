@@ -12,7 +12,7 @@ public class ChatRoom {
     final String name;
     HashMap<String, User> users = new HashMap<String, User>();
     ArrayList<Message> messages = new ArrayList<Message>();
-    boolean expired = false;
+
 
     public ChatRoom(String name) {
         this.name = name;
@@ -22,17 +22,15 @@ public class ChatRoom {
         return name;
     }
 
-    public void addMessage(User user, Message message) {
+    public boolean addMessage(User user, Message message) { //sm
         lock.writeLock().lock();
-        if (!expired) {
-            messages.add(message);
-            for (String s : users.keySet()) {
-                users.get(s).addMessage(message.toString());
-            }
-        } else {
-            user.addMessage("Error: Chat room has been deleted.");
+        messages.add(message);
+        
+        for (String s : users.keySet()) {
+            users.get(s).addMessage(message.toString());
         }
         lock.writeLock().unlock();
+        return true;
     }
 
     public ArrayList<Message> getMessages() {
@@ -43,16 +41,9 @@ public class ChatRoom {
     }
 
     public void addUser(User user) {
-        lock.writeLock().lock();
-        if (!expired) {
-            users.put(user.getToken(), user);
-            user.setChatRoom(this.name);
-            for (Message message : messages) {
-                user.addMessage(message.toString());
-            }
-        } else {
-            user.addMessage("Error: Chat room has been deleted.");
-        }
+    	lock.writeLock().lock();
+        users.put(user.getToken(), user);
+        user.setChatRoom(this.name);
         lock.writeLock().unlock();
     }
 
@@ -61,20 +52,5 @@ public class ChatRoom {
         users.remove(user.getToken());
         user.setChatRoom(null);
         lock.writeLock().unlock();
-    }
-
-    public void expire() {
-        lock.writeLock().lock();
-        expired = true;
-        for (String s : users.keySet()) {
-            User user = users.get(s);
-            user.setChatRoom(null);
-            user.addMessage("Notice: Your current chat room has been deleted");
-        }
-        lock.writeLock().unlock();
-    }
-
-
-
- 
+    } 
 }

@@ -11,7 +11,13 @@ import chat.Chat;
 import chat.ChatHelper;
 import chat.ChatPOA;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 class ChatImpl extends ChatPOA {
 
@@ -28,43 +34,35 @@ class ChatImpl extends ChatPOA {
 
     public void sendMessage(String token, String message) {
         User user = server.getUser(token);
-        if (user != null) {
-            String chatName = user.getChatRoom();
-            ChatRoom chatRoom = server.getChatRoom(chatName);
-            if (chatRoom != null) {
-                Message chatMessage = new Message(user.getName(), message);
-                chatRoom.addMessage(user, chatMessage);
-            } else {
-                user.addMessage("Error: You cannot send a message within the lobby.");
-            }
+        String chatName = user.getChatRoom();
+        ChatRoom chatRoom = server.getChatRoom(chatName);
+        if (chatRoom != null) {
+            Message chatMessage = new Message(user.getName(), message);
+            chatRoom.addMessage(user, chatMessage);
         } else {
-            System.out.println("Invalid token given for sending message.");
+            user.addMessage("Join a room first to send messages");
         }
     }
 
     public String receiveMessage(String token) {
-        User user = server.getUser(token);
-        if (user != null) {
+    	//  System.out.println(token);
+    	User user = server.getUser(token);
+      
             String message = user.getMessage();
             if (message != null) {
                 return message;
             } else {
                 return "";
             }
-        } else {
-            System.out.println("Invalid token given for receiving message.");
-            return "";
-        }
+        
     }
 
     public boolean createChatRoom(String token, String name) {
         User user = server.getUser(token);
         if (user != null) {
             server.addChatRoom(name);
-            user.addMessage("Notice: Created " + name + ".");
             return true;
         } else {
-            System.out.println("Invalid token given for creating chat room.");
             return false;
         }
     }
@@ -80,7 +78,6 @@ class ChatImpl extends ChatPOA {
             
             return str;
         } else {
-            System.out.println("Invalid token given for listing chat rooms.");
             return "Failed, try again";
         }
     }
@@ -90,17 +87,12 @@ class ChatImpl extends ChatPOA {
         if (user != null) {
             ChatRoom chatRoom = server.getChatRoom(name);
             if (chatRoom != null) {
-                user.addMessage("Notice: Joined " + name +  ".");
                 chatRoom.addUser(user);
                 return true;
-            } else {
-                user.addMessage("Error: The specified channel does not exist.");
-                return false;
-            }
-        } else {
-            System.out.println("Invalid token given for joining chat room.");
+            } 
+        } 
             return false;
-        }
+        
     }
 
     public boolean leaveChatRoom(String token) {
@@ -109,24 +101,18 @@ class ChatImpl extends ChatPOA {
             String chatName = user.getChatRoom();
             ChatRoom chatRoom = server.getChatRoom(chatName);
             chatRoom.removeUser(user);
-            user.addMessage("Notice: Left " + chatName +  ".");
             return true;
-        } else {
-            System.out.println("Invalid token given for leaving chat room.");
+        } 
             return false;
-        }
     }
 
     public boolean changeName(String token, String name) {
         User user = server.getUser(token);
         if (user != null) {
-            user.setName(name);
-            user.addMessage("Notice: Changed name to " + name +  ".");
+            user.setName(name);;
             return true;
-        } else {
-            System.out.println("Invalid token given for changing name.");
+        } 
             return false;
-        }
     }
 
 	@Override
@@ -144,6 +130,22 @@ class ChatImpl extends ChatPOA {
 
 public class ChatServer {
     public static void main(String args[]) {
+    	
+    	
+    	
+    	JFrame frame = new JFrame();
+    	BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
+    	frame.setLayout(boxLayout);
+
+        JLabel status = new JLabel("Server Started!");
+        status.setFont(new Font("Verdana", Font.BOLD,30));
+        status.setForeground(new Color(0,102,0));
+        frame.add(status);
+        frame.setSize(300,200 );
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	
+    	
         try{
             // create and initialize the ORB
             ORB orb = ORB.init(args, null);
@@ -173,7 +175,7 @@ public class ChatServer {
             NameComponent path[] = ncRef.to_name( name );
             ncRef.rebind(path, href);
 
-            System.out.println("server.ConnServer ready and waiting ...");
+            System.out.println("Server started");
 
             // wait for invocations from clients
             orb.run();
@@ -182,7 +184,7 @@ public class ChatServer {
             e.printStackTrace();
         }
 
-        System.out.println("server.ConnServer Exiting ...");
+     
 
     }
 }
