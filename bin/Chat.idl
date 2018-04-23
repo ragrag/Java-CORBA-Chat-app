@@ -6,7 +6,7 @@ module chat
         void sendMessage(in string token, in string message);
         string receiveMessage(in string token);
         boolean createChatRoom(in string token, in string name);
-        boolean listChatRooms(in string token);
+        string listChatRooms(in string token);
         boolean joinChatRoom(in string token, in string name);
         boolean leaveChatRoom(in string token);
         boolean changeName(in string token, in string name);

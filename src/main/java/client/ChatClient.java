@@ -7,6 +7,7 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import chat.Chat;
 import chat.ChatHelper;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -50,6 +51,8 @@ public class ChatClient
 
     	        final JTextField textfield = new JTextField(20);
     	        
+    	        JLabel curRoom = new JLabel("Current Room : None");
+    	        curRoom.setForeground(Color.red);
     	        JTextField createRoom = new JTextField(20);
     	        createRoom.setToolTipText("Enter room name ");
     	        JButton createBtn = new JButton("Create Room");
@@ -69,6 +72,7 @@ public class ChatClient
     
     	        
     	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	        frame.add( curRoom);
     	        frame.add( new JLabel("Input" ) );
     	        frame.add(textfield);
     	        frame.add( new JLabel(" Create a Room" ) );
@@ -115,8 +119,10 @@ public class ChatClient
 		        	if(createRoom.getText().equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
+		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  {
     	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+    	        		createRoom.setText("");
+		        		}
 		        		else 
     	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
     	        	  }
@@ -131,8 +137,14 @@ public class ChatClient
     	        	  if(joinRoom.getText().equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.joinChatRoom(token, joinRoom.getText()))  
+		        		if(chatImpl.joinChatRoom(token, joinRoom.getText())) 
+		        		{
+		        			
   	        		JOptionPane.showMessageDialog(null, "Joined Room "+ createRoom.getText() + "!");
+  	        		curRoom.setText("Current Room : "+joinRoom.getText());
+  	        		curRoom.setForeground(Color.green);
+  	        		joinRoom.setText("");
+		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
   	        	  }
@@ -143,29 +155,23 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	        	  if(createRoom.getText().equals(""))
-		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
-		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
-  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+    	        	 
+		        		if(chatImpl.leaveChatRoom(token)) {
+  	        		JOptionPane.showMessageDialog(null, "Left Room!");
+  	        		curRoom.setText("Current Room : None");
+  	        		curRoom.setForeground(Color.red);
+		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
   	        	  }
-    	          }
+    	          
     	        });
     	        
     	        roomListBtn.addActionListener(new ActionListener()
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-    	        	  if(createRoom.getText().equals(""))
-		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
-		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
-  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
-		        		else 
-  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
-  	        	  }
+  	        		JOptionPane.showMessageDialog(null, chatImpl.listChatRooms(token));
     	          }
     	        });
     	        
@@ -176,52 +182,13 @@ public class ChatClient
     	        	  if(createRoom.getText().equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
-  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
+		        		if(chatImpl.changeName(token, nameField.getText()))  
+  	        		JOptionPane.showMessageDialog(null, "Name Changed to " + nameField.getText());
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
   	        	  }
     	          }
     	        });
-    	        
-    	        helpBtn.addActionListener(new ActionListener()
-    	        {
-    	          public void actionPerformed(ActionEvent e)
-    	          {
-    	        	  if(createRoom.getText().equals(""))
-		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
-		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
-  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
-		        		else 
-  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
-  	        	  }
-    	          }
-    	        });
-    	        
-    	        quitBtn.addActionListener(new ActionListener()
-    	        {
-    	          public void actionPerformed(ActionEvent e)
-    	          {
-    	        	  if(createRoom.getText().equals(""))
-		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
-		        	else {
-		        		if(chatImpl.createChatRoom(token, createRoom.getText()))  
-  	        		JOptionPane.showMessageDialog(null, "Room "+ createRoom.getText() + " Created!");
-		        		else 
-  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
-  	        	  }
-    	          }
-    	        });
-    	        
-    	      
-    	     
-    	     
-    	        
-    	       
-    	     
-    	   
-    	        
     	        
     	    }
     	

@@ -1,5 +1,4 @@
-/Chat.idl
-/chat/
-/client/
 /orb.db/
 /server/
+/client/
+/chat/

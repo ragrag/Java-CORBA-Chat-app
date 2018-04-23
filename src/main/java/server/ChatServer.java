@@ -69,7 +69,7 @@ class ChatImpl extends ChatPOA {
         }
     }
 
-    public boolean listChatRooms(String token) {
+    public String listChatRooms(String token) {
         User user = server.getUser(token);
         if (user != null) {
             ArrayList<String> chatNames = server.getChatRooms();
@@ -77,11 +77,11 @@ class ChatImpl extends ChatPOA {
             for (String chatName : chatNames) {
                 str += chatName + "\n";
             }
-            user.addMessage(str.substring(0, str.length()-1));
-            return true;
+            
+            return str;
         } else {
             System.out.println("Invalid token given for listing chat rooms.");
-            return false;
+            return "Failed, try again";
         }
     }
 
