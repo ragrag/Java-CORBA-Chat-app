@@ -9,7 +9,7 @@ import chat.ChatHelper;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Scanner;
+
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -35,7 +35,7 @@ public class ChatClient
     static Chat chatImpl;
     static String token;
     static JFrame frame = new JFrame();
-
+    private static final PrintStream SYSTEM_OUT = System.out;
     public static class Input implements Runnable {
  
     	
@@ -176,6 +176,7 @@ public class ChatClient
 		        		if(chatImpl.changeName(token, input))  {
   	        		JOptionPane.showMessageDialog(null, "Name Changed to " + input);
   	        		curName.setText("Current Name : "+chatImpl.getName(token));
+  	        		frame.setTitle(input);
 		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
@@ -235,7 +236,6 @@ public class ChatClient
 
     public static void main(String args[])
     {
-    	
         BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
         frame.setLayout(boxLayout);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -266,6 +266,8 @@ public class ChatClient
             System.out.println("ERROR : " + e) ;
             e.printStackTrace(System.out);
         }
+        
+        frame.setTitle(chatImpl.getName(token));
     }
 
 }

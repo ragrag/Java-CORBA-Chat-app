@@ -8,8 +8,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
-    static final String DEFAULT_NAME = "User";
-    static int userCounter = 1;
+	static int userCounter = 1;
+    static final String userDefName = "User";
+  
 
     ReadWriteLock lock = new ReentrantReadWriteLock();
     HashMap<String, User> users = new HashMap<String, User>();
@@ -46,7 +47,7 @@ public class Server {
     public String addUser() {
         lock.writeLock().lock();
         String token = randomString();
-        User user = new User(token, DEFAULT_NAME + userCounter++ );
+        User user = new User(token, userDefName + userCounter++ );
         users.put(user.getToken(), user);
         lock.writeLock().unlock();
         return token;
