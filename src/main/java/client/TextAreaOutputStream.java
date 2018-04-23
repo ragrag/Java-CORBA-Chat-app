@@ -14,8 +14,8 @@ extends OutputStream
 {
 
 
-private byte[]                          oneByte;                                                    // array for write(int val);
-private Appender                        appender;                                                   // most recent action
+private byte[]  oneByte;   // array for write(int val);
+private Appender   appender;          // most recent action
 
 public TextAreaOutputStream(JTextArea txtara) {
     this(txtara,1000);

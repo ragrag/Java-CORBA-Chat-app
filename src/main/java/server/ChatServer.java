@@ -35,7 +35,7 @@ class ChatImpl extends ChatPOA {
     public void sendMessage(String token, String message) {
         User user = server.getUser(token);
         String chatName = user.getChatRoom();
-        ChatRoom chatRoom = server.getChatRoom(chatName);
+        Room chatRoom = server.getChatRoom(chatName);
         if (chatRoom != null) {
             Message chatMessage = new Message(user.getName(), message);
             chatRoom.addMessage(user, chatMessage);
@@ -85,7 +85,7 @@ class ChatImpl extends ChatPOA {
     public boolean joinChatRoom(String token, String name) {
         User user = server.getUser(token);
         if (user != null) {
-            ChatRoom chatRoom = server.getChatRoom(name);
+            Room chatRoom = server.getChatRoom(name);
             if (chatRoom != null) {
                 chatRoom.addUser(user);
                 return true;
@@ -99,7 +99,7 @@ class ChatImpl extends ChatPOA {
         User user = server.getUser(token);
         if (user != null) {
             String chatName = user.getChatRoom();
-            ChatRoom chatRoom = server.getChatRoom(chatName);
+            Room chatRoom = server.getChatRoom(chatName);
             chatRoom.removeUser(user);
             return true;
         } 

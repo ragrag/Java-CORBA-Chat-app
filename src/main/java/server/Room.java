@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class ChatRoom {
+public class Room {
     ReadWriteLock lock = new ReentrantReadWriteLock();
     final String name;
     HashMap<String, User> users = new HashMap<String, User>();
     ArrayList<Message> messages = new ArrayList<Message>();
 
 
-    public ChatRoom(String name) {
+    public Room(String name) {
         this.name = name;
     }
 
