@@ -5,21 +5,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message {
-    
-	
-	
-	Date date;
-    String username;
-    String text;
 
-    public Message(String username, String text) {
+	
+    String user;  //Message sender
+    String content; //Message content
+    Date date;	//Message date (Auto-set on new)
+    
+    public Message(String user, String content) { //Message Constructor
+        this.user = user;
+        this.content = content;
         this.date = new Date();
-        this.username = username;
-        this.text = text;
     }
 
-    public String toString() {
+    public String toString() { //Message to string
         DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        return dateFormat.format(date) + " - " + username + ": " + text;
+        return dateFormat.format(date) + " - " + user + ": " + content;
     }
 }

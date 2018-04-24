@@ -32,19 +32,17 @@ public class ChatClient
 {
 
 
-    static Chat chatImpl;
-    static String token;
-    static JFrame frame = new JFrame();
-    private static final PrintStream SYSTEM_OUT = System.out;
-    public static class Input implements Runnable {
+    static Chat chatImpl;	//Server implementation instance
+    static String token;	//Token used to identify different users in ther Server's Hashmap
+    static JFrame frame = new JFrame();		//Jframe Initilization, Global to work on both input and output threads
+    private static final PrintStream SYSTEM_OUT = System.out;	//Get input from JTextField
+    public static class Input implements Runnable { //Input Thread that has JFrame buttons and input field
  
     	
-    	 private void initUI() {
-    	  
-    	   
-
-    	        final JTextField textfield = new JTextField(20);
-    	        
+    	 private void initUI() { //Function called in run() to initialize GUI when thread is started
+    		 												//GUI Buttons,Labels and TextFields	
+    	        final JTextField userInput = new JTextField(20);		
+					
     	        JLabel curRoom = new JLabel("Current Room : None");
     	        curRoom.setForeground(Color.red);
     	        curRoom.setFont(new Font("Verdana", Font.BOLD,15));
@@ -56,14 +54,13 @@ public class ChatClient
     	        JButton leaveBtn = new JButton("leave Room");
     	        JButton roomListBtn = new JButton("Room List");
     	        JButton nameBtn = new JButton("Change Name");
-
-    	        
+    	        						//Adding GUI elements to JFrame 
     	        frame.add( curRoom);
        	        frame.add( curName);
     	        JLabel enterMsg = new JLabel("Enter a message");
     	        enterMsg.setFont(new Font("Verdana", Font.ITALIC,13));
     	        frame.add( enterMsg );
-    	        frame.add(textfield);
+    	        frame.add(userInput);
     	        frame.add(nameBtn);
     	        frame.add(createBtn);
     	        frame.add( joinBtn );
@@ -71,20 +68,18 @@ public class ChatClient
     	        frame.add(roomListBtn);
     	        frame.setSize(400,600 );
     	        frame.setVisible(true);
-    	        
-    	        
-    	        
-    	        textfield.addActionListener(new ActionListener() {
+    	        		//Action Listener to detect Enter key press to read from userInput JTF	
+    	        userInput.addActionListener(new ActionListener() {		
 
     	            @Override
     	            public void actionPerformed(ActionEvent e) {
     	                try {
-    	                    String text = textfield.getText();
+    	                    String text = userInput.getText();
     	                    InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
     	                    if(!text.equals(""))
     	                    {	
     	                    	chatImpl.sendMessage(token, text);
-    	                    	textfield.setText("");
+    	                    	userInput.setText("");
     	                    }
     	                    System.err.println(text);
     	                } catch (UnsupportedEncodingException e1) {
@@ -93,9 +88,7 @@ public class ChatClient
 
     	            }
     	        });
-    	        
-    	        
-    	        
+    	        							//Action Listeners on GUI Buttons
     	        createBtn.addActionListener(new ActionListener()
     	        {
     	          public void actionPerformed(ActionEvent e)
@@ -115,7 +108,6 @@ public class ChatClient
     	          }
     	        });
     	        
-    	      
     	        joinBtn.addActionListener(new ActionListener()
     	        {
     	          public void actionPerformed(ActionEvent e)
@@ -150,7 +142,7 @@ public class ChatClient
   	        		curRoom.setForeground(Color.red);
 		        		}
 		        		else 
-  	        		JOptionPane.showMessageDialog(null, "Failed, Try Again");
+  	        		JOptionPane.showMessageDialog(null, "Your are not in a room.");
   	        	  }
     	          
     	        });
@@ -187,10 +179,9 @@ public class ChatClient
     	    }
     	
         public void run() {
-        	try {
-				Thread.sleep(100);
+    	try {	//Sleep after thread start to make sure output thread finishes flooding JFrame first
+				Thread.sleep(150);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         	initUI();
@@ -200,10 +191,10 @@ public class ChatClient
      
     }
 
-    public static class Output implements Runnable {
+    public static class Output implements Runnable {	//Output threada
 
         public void run() {
-
+        								//Output Text area init
             JTextArea ta = new JTextArea();
             TextAreaOutputStream taos = new TextAreaOutputStream( ta, 60 );
             PrintStream ps = new PrintStream( taos );
@@ -216,7 +207,7 @@ public class ChatClient
             frame.add( sp  );
             frame.pack();
 
-            while(true) {
+            while(true) {		//Keep Receiving messages from server
 
                 String message = chatImpl.receiveMessage(token);
                 if (!message.isEmpty()) {
@@ -240,24 +231,22 @@ public class ChatClient
         frame.setLayout(boxLayout);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try{
-            // create and initialize the ORB
+            //Orb initilization
             ORB orb = ORB.init(args, null);
 
-            // get the root naming context
+            //Fetching the naming context
             org.omg.CORBA.Object objRef =
                     orb.resolve_initial_references("NameService");
-
-            // Use NamingContextExt instead of NamingContext. This is
-            // part of the Interoperable naming Service.
             NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 
-            // resolve the Object Reference in Naming
-            String name = "Conn";
+            //Object Reference
+            String name = "ChatCon";
             chatImpl = ChatHelper.narrow(ncRef.resolve_str(name));
-
-            System.out.println("Connected ");
-            token = chatImpl.connect();
             
+            System.out.println("Connected ");
+            token = chatImpl.connect(); //Receive token from server
+            
+            //Input/Output threads start
             new Thread(new Output()).start();
             new Thread(new Input()).start();
            
@@ -267,7 +256,7 @@ public class ChatClient
             e.printStackTrace(System.out);
         }
         
-        frame.setTitle(chatImpl.getName(token));
+        frame.setTitle(chatImpl.getName(token)); //Set Jframe name as user name
     }
 
 }

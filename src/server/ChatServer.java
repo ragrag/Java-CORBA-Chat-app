@@ -19,111 +19,85 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-class ChatImpl extends ChatPOA {
+class ChatImpl extends ChatPOA { //Server implementation 
 
     private ORB orb;
-    Server server = new Server();
+    Server server = new Server(); //Server (Container) Instance 
 
     public void setORB(ORB orb_val) {
         orb = orb_val;
     }
 
-    public String connect() {
+    public String connect() { //Add user when connecting
         return server.addUser();
     }
 
-    public void sendMessage(String token, String message) {
+    public void sendMessage(String token, String message) { //Add user message to chat room
         User user = server.getUser(token);
-        String chatName = user.getChatRoom();
-        Room chatRoom = server.getChatRoom(chatName);
-        if (chatRoom != null) {
+        Room chatRoom = server.getChatRoom(user.getChatRoom());
+        if (chatRoom != null) {	//Check if user is in a room (not in lobby)
             Message chatMessage = new Message(user.getName(), message);
             chatRoom.addMessage(user, chatMessage);
         } else {
-            user.addMessage("Join a room first to send messages");
+            user.addMessage("Join a room first to send messages"); //Display that user isn't in a room
         }
     }
 
-    public String receiveMessage(String token) {
-    	//  System.out.println(token);
+    public String receiveMessage(String token) { //Receive messages from use message queue
     	User user = server.getUser(token);
-      
-            String message = user.getMessage();
+        String message = user.getMessage();
             if (message != null) {
                 return message;
-            } else {
-                return "";
-            }
-        
+            } 
+            return "";
     }
 
-    public boolean createChatRoom(String token, String name) {
+    public boolean createChatRoom(String token, String name) { //Create chat room 
         User user = server.getUser(token);
-        if (user != null) {
-            server.addChatRoom(name);
-            return true;
-        } else {
-            return false;
-        }
+        server.addChatRoom(name);
+        return true;
     }
 
-    public String listChatRooms(String token) {
+    public String listChatRooms(String token) { //Get All Chat rooms
         User user = server.getUser(token);
-        if (user != null) {
             ArrayList<String> chatNames = server.getChatRooms();
             String str = "Chat Rooms:\n";
             for (String chatName : chatNames) {
                 str += chatName + "\n";
             }
-            
             return str;
-        } else {
-            return "Failed, try again";
-        }
+
     }
 
-    public boolean joinChatRoom(String token, String name) {
+    public boolean joinChatRoom(String token, String name) { //Join chat room
         User user = server.getUser(token);
-        if (user != null) {
-            Room chatRoom = server.getChatRoom(name);
-            if (chatRoom != null) {
-                chatRoom.addUser(user);
-                return true;
-            } 
+        Room chatRoom = server.getChatRoom(name);
+        if (chatRoom != null) {
+            chatRoom.addUser(user);
+            return true;
         } 
-            return false;
-        
+        else return false;
     }
 
-    public boolean leaveChatRoom(String token) {
+    public boolean leaveChatRoom(String token) { //User Leave chat room
         User user = server.getUser(token);
-        if (user != null) {
+        if (!user.getChatRoom().equals("")) {
             String chatName = user.getChatRoom();
             Room chatRoom = server.getChatRoom(chatName);
             chatRoom.removeUser(user);
             return true;
         } 
-            return false;
+        else  return false;
     }
 
-    public boolean changeName(String token, String name) {
-        User user = server.getUser(token);
-        if (user != null) {
-            user.setName(name);;
+    public boolean changeName(String token, String name) { //Change name 
+        server.getUser(token).setName(name);
             return true;
-        } 
-            return false;
     }
 
 	@Override
-	public String getName(String token) {
-		 User user = server.getUser(token);
-	        if (user != null) {
-	            return user.getName();
-	        } else {
-	            return "";
-	        }
-			
+	public String getName(String token) { //Get user name
+	     return server.getUser(token).getName();
 	}
 }
 
@@ -147,37 +121,34 @@ public class ChatServer {
     	
     	
         try{
-            // create and initialize the ORB
+            //Orb initialization
             ORB orb = ORB.init(args, null);
 
-            // get reference to rootpoa & activate the POAManager
+            //get POA Reference
             POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
             rootpoa.the_POAManager().activate();
 
-            // create servant and register it with the ORB
+            //Create and register servlet
             ChatImpl connImpl = new ChatImpl();
             connImpl.setORB(orb);
 
-            // get object reference from the servant
+            //Get Object reference from servlet
             org.omg.CORBA.Object ref = rootpoa.servant_to_reference(connImpl);
             Chat href = ChatHelper.narrow(ref);
 
-            // get the root naming context
-            // NameService invokes the name service
+            //Get naming context
             org.omg.CORBA.Object objRef =
                     orb.resolve_initial_references("NameService");
-            // Use NamingContextExt which is part of the Interoperable
-            // Naming Service (INS) specification.
             NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 
-            // bind the Object Reference in Naming
-            String name = "Conn";
+            //Bind object to reference
+            String name = "ChatCon";
             NameComponent path[] = ncRef.to_name( name );
             ncRef.rebind(path, href);
 
             System.out.println("Server started");
 
-            // wait for invocations from clients
+            //Start listening
             orb.run();
         }
         catch (Exception e) {

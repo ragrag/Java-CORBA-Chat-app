@@ -1,4 +1,4 @@
-package server;
+ package server;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -6,57 +6,46 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class User {
-    ReadWriteLock lock = new ReentrantReadWriteLock();
-    final String token;
-    String name;
-    String chatRoom;
-    Queue<String> messages = new LinkedList<String>();
 
-    public User(String token, String name) {
+    final String token;		//User token, mapped to each user in server Hashmap
+    String name;			//User name
+    String chatRoom;		//Current user chatRoom
+    Queue<String> messages = new LinkedList<String>();//User messeges to print in FIFO
+
+    public User(String token, String name) {	//User Constructor
         this.token = token;
         this.name = name;
+        chatRoom = "";
     }
 
-    public String getToken() {
+    public String getToken() {		//Retrieve user token
         return token;
     }
 
-    public String getName() {
-        lock.readLock().lock();
+    public synchronized String getName() {  //Get User name
         String name = this.name;
-        lock.readLock().unlock();
         return name;
     }
 
-    public void setName(String name) {
-        lock.writeLock().lock();
+    public synchronized void setName(String name) {  //Set user name
         this.name = name;
-        lock.writeLock().unlock();
     }
 
-    public String getChatRoom() {
-        lock.readLock().lock();
+    public synchronized String getChatRoom() {	//Get user current chat room
         String chatRoom = this.chatRoom;
-        lock.readLock().unlock();
         return chatRoom;
     }
 
-    public void setChatRoom(String chatRoom) {
-        lock.writeLock().lock();
+    public synchronized void setChatRoom(String chatRoom) { //Set user that room
         this.chatRoom = chatRoom;
-        lock.writeLock().unlock();
     }
 
-    public void addMessage(String message) {
-        lock.writeLock().lock();
+    public synchronized void addMessage(String message) { //enqueue message to the messages queue
         messages.add(message);
-        lock.writeLock().unlock();
     }
 
-    public String getMessage() {
-        lock.writeLock().lock();
+    public synchronized String getMessage() { //dequeue message from messages queue
         String message = messages.poll();
-        lock.writeLock().unlock();
         return message;
     }
 }

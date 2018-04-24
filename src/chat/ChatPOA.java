@@ -8,7 +8,7 @@ package chat;
 * Monday, April 23, 2018 10:25:27 PM EET
 */
 
-public abstract class ChatPOA extends org.omg.PortableServer.Servant
+public abstract class ChatPOA extends org.omg.PortableServer.Servant	
  implements chat.ChatOperations, org.omg.CORBA.portable.InvokeHandler
 {
 
