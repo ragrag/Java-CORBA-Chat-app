@@ -95,7 +95,7 @@ class ChatImpl extends ChatPOA { //Server implementation
             return true;
     }
 
-	@Override
+
 	public String getName(String token) { //Get user name
 	     return server.getUser(token).getName();
 	}

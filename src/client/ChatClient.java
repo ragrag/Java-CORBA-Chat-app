@@ -47,13 +47,15 @@ public class ChatClient
     	        curRoom.setForeground(Color.red);
     	        curRoom.setFont(new Font("Verdana", Font.BOLD,15));
     	        JLabel curName= new JLabel();
-    	        curName.setText("Current name : " + chatImpl.getName(token));
+    	        curName.setText("Current Name : " + chatImpl.getName(token));
     	        curName.setFont(new Font("Verdana", Font.BOLD,15));
     	        JButton createBtn = new JButton("Create Room");
     	        JButton joinBtn = new JButton("Join Room");
     	        JButton leaveBtn = new JButton("leave Room");
     	        JButton roomListBtn = new JButton("Room List");
     	        JButton nameBtn = new JButton("Change Name");
+    	        
+    	  
     	        						//Adding GUI elements to JFrame 
     	        frame.add( curRoom);
        	        frame.add( curName);
