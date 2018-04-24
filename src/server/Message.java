@@ -5,7 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message {
-    Date date;
+    
+	
+	
+	Date date;
     String username;
     String text;
 
