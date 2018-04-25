@@ -18,7 +18,6 @@ public class Message {
     }
 
     public String toString() { //Message to string
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        return dateFormat.format(date) + " - " + user + ": " + content;
+        return new SimpleDateFormat("HH:mm").format(date) + " - " + user + ": " + content;
     }
 }

@@ -47,7 +47,7 @@ public class ChatClient
     	        curRoom.setForeground(Color.red);
     	        curRoom.setFont(new Font("Verdana", Font.BOLD,15));
     	        JLabel curName= new JLabel();
-    	        curName.setText("Current Name : " + chatImpl.getName(token));
+    	        curName.setText("Current Name : " + chatImpl.getName(new chat.User(token,"")));
     	        curName.setFont(new Font("Verdana", Font.BOLD,15));
     	        JButton createBtn = new JButton("Create Room");
     	        JButton joinBtn = new JButton("Join Room");
@@ -76,14 +76,14 @@ public class ChatClient
     	            @Override
     	            public void actionPerformed(ActionEvent e) {
     	                try {
-    	                    String text = userInput.getText();
-    	                    InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
-    	                    if(!text.equals(""))
+    	                    String input = userInput.getText();
+    	                    InputStream is = new ByteArrayInputStream(input.getBytes("UTF-8"));
+    	                    if(!input.equals(""))
     	                    {	
-    	                    	chatImpl.sendMessage(token, text);
+    	                    	chatImpl.sendMessage(new chat.Message(input,token));
     	                    	userInput.setText("");
     	                    }
-    	                    System.err.println(text);
+    	                    System.err.println(input);
     	                } catch (UnsupportedEncodingException e1) {
     	                    e1.printStackTrace();
     	                }
@@ -101,7 +101,7 @@ public class ChatClient
 		        	if(input.equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.createChatRoom(token, input))  {
+		        		if(chatImpl.createChatRoom( new chat.Room(input)))  {
     	        		JOptionPane.showMessageDialog(null, "Room "+ input + " Created!");
 		        		}
 		        		else 
@@ -120,7 +120,7 @@ public class ChatClient
     	        	  if(input.equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.joinChatRoom(token, input)) 
+		        		if(chatImpl.joinChatRoom(new chat.User(token,""), new chat.Room(input))) 
 		        		{
 		        			
   	        		JOptionPane.showMessageDialog(null, "Joined Room "+ input + "!");
@@ -138,7 +138,7 @@ public class ChatClient
     	          public void actionPerformed(ActionEvent e)
     	          {
     	        	 
-		        		if(chatImpl.leaveChatRoom(token)) {
+		        		if(chatImpl.leaveChatRoom(new chat.User(token,""))) {
   	        		JOptionPane.showMessageDialog(null, "Left Room!");
   	        		curRoom.setText("Current Room : None");
   	        		curRoom.setForeground(Color.red);
@@ -153,7 +153,7 @@ public class ChatClient
     	        {
     	          public void actionPerformed(ActionEvent e)
     	          {
-  	        		JOptionPane.showMessageDialog(null, chatImpl.listChatRooms(token));
+  	        		JOptionPane.showMessageDialog(null, chatImpl.listChatRooms());
     	          }
     	        });
     	        
@@ -167,9 +167,9 @@ public class ChatClient
     	        	  if(input.equals(""))
 		        			JOptionPane.showMessageDialog(null, "Failed, Make sure the field is not empty");
 		        	else {
-		        		if(chatImpl.changeName(token, input))  {
+		        		if(chatImpl.changeName(new chat.User(token, input)))  {
   	        		JOptionPane.showMessageDialog(null, "Name Changed to " + input);
-  	        		curName.setText("Current Name : "+chatImpl.getName(token));
+  	        		curName.setText("Current Name : "+chatImpl.getName(new chat.User(token,"")));
   	        		frame.setTitle(input);
 		        		}
 		        		else 
@@ -211,7 +211,7 @@ public class ChatClient
 
             while(true) {		//Keep Receiving messages from server
 
-                String message = chatImpl.receiveMessage(token);
+                String message = chatImpl.receiveMessage(new chat.User(token,""));
                 if (!message.isEmpty()) {
                     System.out.println(message);
                 } else {
@@ -258,7 +258,7 @@ public class ChatClient
             e.printStackTrace(System.out);
         }
         
-        frame.setTitle(chatImpl.getName(token)); //Set Jframe name as user name
+        frame.setTitle(chatImpl.getName(new chat.User(token,""))); //Set Jframe name as user name
     }
 
 }

@@ -32,73 +32,82 @@ class ChatImpl extends ChatPOA { //Server implementation
         return server.addUser();
     }
 
-    public void sendMessage(String token, String message) { //Add user message to chat room
-        User user = server.getUser(token);
-        Room chatRoom = server.getChatRoom(user.getChatRoom());
+    public void sendMessage(chat.Message msg) { //Add user message to chat room
+        User _user = server.getUser(msg.senderToken);
+        Room chatRoom = server.getChatRoom(_user.getChatRoom());
         if (chatRoom != null) {	//Check if user is in a room (not in lobby)
-            Message chatMessage = new Message(user.getName(), message);
-            chatRoom.addMessage(user, chatMessage);
+            Message chatMessage = new Message(_user.getName(), msg.content);
+            chatRoom.addMessage(_user, chatMessage);
         } else {
-            user.addMessage("Join a room first to send messages"); //Display that user isn't in a room
+            _user.addMessage("Join a room first to send messages"); //Display that user isn't in a room
         }
     }
 
-    public String receiveMessage(String token) { //Receive messages from use message queue
-    	User user = server.getUser(token);
-        String message = user.getMessage();
+    public String receiveMessage(chat.User user) { //Receive messages from use message queue
+    	User _user = server.getUser(user.token);
+        String message = _user.getMessage();
             if (message != null) {
                 return message;
             } 
             return "";
     }
 
-    public boolean createChatRoom(String token, String name) { //Create chat room 
-        User user = server.getUser(token);
-        server.addChatRoom(name);
-        return true;
-    }
 
-    public String listChatRooms(String token) { //Get All Chat rooms
-        User user = server.getUser(token);
+    public String listChatRooms() { //Get All Chat rooms
             ArrayList<String> chatNames = server.getChatRooms();
             String str = "Chat Rooms:\n";
             for (String chatName : chatNames) {
                 str += chatName + "\n";
             }
             return str;
-
     }
 
-    public boolean joinChatRoom(String token, String name) { //Join chat room
-        User user = server.getUser(token);
-        Room chatRoom = server.getChatRoom(name);
+
+
+	public String getName(chat.User user) { //Get user name
+	     return server.getUser(user.token).getName();
+	}
+
+	
+	@Override
+	public boolean createChatRoom(chat.Room room) {
+        server.addChatRoom(room.name);
+        return true;
+	}
+
+	@Override
+	public boolean joinChatRoom(chat.User user, chat.Room room) {
+		User _user = server.getUser(user.token);
+        Room chatRoom = server.getChatRoom(room.name);
         if (chatRoom != null) {
-            chatRoom.addUser(user);
+            chatRoom.addUser(_user);
             return true;
         } 
         else return false;
-    }
+	}
 
-    public boolean leaveChatRoom(String token) { //User Leave chat room
-        User user = server.getUser(token);
-        if (!user.getChatRoom().equals("")) {
-            String chatName = user.getChatRoom();
+	@Override
+	public boolean leaveChatRoom(chat.User user) {
+		User _user = server.getUser(user.token);
+        if (!_user.getChatRoom().equals("")) {
+            String chatName = _user.getChatRoom();
             Room chatRoom = server.getChatRoom(chatName);
-            chatRoom.removeUser(user);
+            chatRoom.removeUser(_user);
             return true;
         } 
         else  return false;
-    }
-
-    public boolean changeName(String token, String name) { //Change name 
-        server.getUser(token).setName(name);
-            return true;
-    }
-
-
-	public String getName(String token) { //Get user name
-	     return server.getUser(token).getName();
+	
 	}
+
+	@Override
+	public boolean changeName(chat.User user) {
+		server.getUser(user.token).setName(user.name);
+        return true;
+	}
+
+
+
+
 }
 
 

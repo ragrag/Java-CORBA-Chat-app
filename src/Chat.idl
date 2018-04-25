@@ -1,15 +1,33 @@
 module chat
 {
+
+struct User{
+    string token;
+    string name;
+  };
+  
+  struct Room
+  {
+  string name;
+  };
+  
+   struct Message
+  {
+  string content;
+  string senderToken;
+  };
+  
+  
     interface Chat
     {
         string connect();
-        void sendMessage(in string token, in string message);
-        string receiveMessage(in string token);
-        boolean createChatRoom(in string token, in string name);
-        string listChatRooms(in string token);
-        boolean joinChatRoom(in string token, in string name);
-        boolean leaveChatRoom(in string token);
-        boolean changeName(in string token, in string name);
-        string getName(in string token);
+        void sendMessage(in Message msg);
+        string receiveMessage(in User user);
+        boolean createChatRoom(in Room room);
+        string listChatRooms();
+        boolean joinChatRoom(in User user, in Room room);
+        boolean leaveChatRoom(in User user);
+        boolean changeName(in User user);
+        string getName(in User user);
     };
 };
