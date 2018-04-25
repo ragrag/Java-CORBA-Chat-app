@@ -24,7 +24,11 @@ class ChatImpl extends ChatPOA { //Server implementation
     private ORB orb;
     Container container = new Container(); //Container Instance 
 
-    
+
+    public void setORB(ORB orb) { //Orb setter
+         this.orb = orb;
+     }
+
     
     
     public String getToken() { //Add user and receive his token
@@ -132,10 +136,6 @@ class ChatImpl extends ChatPOA { //Server implementation
         return true;
 	}
 
-
-   public void setORB(ORB orb) { //Orb setter
-        this.orb = orb;
-    }
 
  
 }
