@@ -93,7 +93,7 @@ public class Room {
 
     public synchronized void removeUser(User user) { //Remove user from room hashmap
         users.remove(user.getToken());
-        user.setChatRoom(null);
+        user.setChatRoom("");
 
     } 
 }
