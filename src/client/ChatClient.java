@@ -36,9 +36,8 @@ public class ChatClient
     static String token;	//Token used to identify different users in ther Server's Hashmap
     static JFrame frame = new JFrame();		//Jframe Initilization, Global to work on both input and output threads
     private static final PrintStream SYSTEM_OUT = System.out;	//Get input from JTextField
+  
     public static class Input implements Runnable { //Input Thread that has JFrame buttons and input field
- 
-    	
     	 private void initUI() { //Function called in run() to initialize GUI when thread is started
     		 												//GUI Buttons,Labels and TextFields	
     	        final JTextField userInput = new JTextField(20);		
@@ -52,6 +51,7 @@ public class ChatClient
     	        JButton createBtn = new JButton("Create Room");
     	        JButton joinBtn = new JButton("Join Room");
     	        JButton leaveBtn = new JButton("leave Room");
+    	        JButton typeBtn = new JButton("Change room mode");
     	        JButton roomListBtn = new JButton("Room List");
     	        JButton nameBtn = new JButton("Change Name");
     	        
@@ -67,6 +67,7 @@ public class ChatClient
     	        frame.add(createBtn);
     	        frame.add( joinBtn );
     	        frame.add(leaveBtn);
+    	        frame.add(typeBtn);
     	        frame.add(roomListBtn);
     	        frame.setSize(400,600 );
     	        frame.setVisible(true);
@@ -124,7 +125,7 @@ public class ChatClient
 		        		{
 		        			
   	        		JOptionPane.showMessageDialog(null, "Joined Room "+ input + "!");
-  	        		curRoom.setText("Current Room : "+input);
+  	        		curRoom.setText("Current Room : "+input );
   	        		curRoom.setForeground(new Color(0,160,0));
 		        		}
 		        		else 
@@ -142,6 +143,23 @@ public class ChatClient
   	        		JOptionPane.showMessageDialog(null, "Left Room!");
   	        		curRoom.setText("Current Room : None");
   	        		curRoom.setForeground(Color.red);
+		        		}
+		        		else 
+  	        		JOptionPane.showMessageDialog(null, "Your are not in a room.");
+  	        	  }
+    	          
+    	        });
+    	        
+    	        
+    	        
+    	        typeBtn.addActionListener(new ActionListener()
+    	        {
+    	          public void actionPerformed(ActionEvent e)
+    	          {
+    	        	 
+		        		if(chatImpl.roomType(new chat.User(token,""))) {
+		        			String type = chatImpl.getRoomType(new chat.User(token,"")) ? "  Game mode" : "  Chat mode";
+  	        		JOptionPane.showMessageDialog(null, "Type changed to "+type);
 		        		}
 		        		else 
   	        		JOptionPane.showMessageDialog(null, "Your are not in a room.");
@@ -211,7 +229,7 @@ public class ChatClient
 
             while(true) {		//Keep Receiving messages from server
 
-                String message = chatImpl.receiveMessage(new chat.User(token,""));
+                String message = chatImpl.getMessage(new chat.User(token,""));
                 if (!message.isEmpty()) {
                     System.out.println(message);
                 } else {
@@ -232,6 +250,8 @@ public class ChatClient
         BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
         frame.setLayout(boxLayout);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        
         try{
             //Orb initilization
             ORB orb = ORB.init(args, null);
@@ -246,7 +266,8 @@ public class ChatClient
             chatImpl = ChatHelper.narrow(ncRef.resolve_str(name));
             
             System.out.println("Connected ");
-            token = chatImpl.connect(); //Receive token from server
+            token = chatImpl.getToken(); //Receive token from server
+            
             
             //Input/Output threads start
             new Thread(new Output()).start();

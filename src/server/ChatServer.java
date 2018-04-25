@@ -22,19 +22,32 @@ import javax.swing.JLabel;
 class ChatImpl extends ChatPOA { //Server implementation 
 
     private ORB orb;
-    Server server = new Server(); //Server (Container) Instance 
+    Container container = new Container(); //Container Instance 
 
-    public void setORB(ORB orb_val) {
-        orb = orb_val;
-    }
+    
+    
+    public String listChatRooms() { //Get All Chat rooms
+        ArrayList<String> allRooms = container.getChatRooms();
+        if ( allRooms.size() == 0 )
+        {
+        	return "There are currently no rooms";
+        }
+        String roomList = "Chat Rooms (" + allRooms.size() + ") :\n";
+        for (String room : allRooms) {
+            roomList += room+ "\n";
+        }
+        return roomList;
+}
 
-    public String connect() { //Add user when connecting
-        return server.addUser();
-    }
 
+	public String getName(chat.User user) { //Get user name
+	     return container.getUser(user.token).getName();
+	}
+
+ 
     public void sendMessage(chat.Message msg) { //Add user message to chat room
-        User _user = server.getUser(msg.senderToken);
-        Room chatRoom = server.getChatRoom(_user.getChatRoom());
+        User _user = container.getUser(msg.senderToken);
+        Room chatRoom = container.getChatRoom(_user.getChatRoom());
         if (chatRoom != null) {	//Check if user is in a room (not in lobby)
             Message chatMessage = new Message(_user.getName(), msg.content);
             chatRoom.addMessage(_user, chatMessage);
@@ -43,8 +56,8 @@ class ChatImpl extends ChatPOA { //Server implementation
         }
     }
 
-    public String receiveMessage(chat.User user) { //Receive messages from use message queue
-    	User _user = server.getUser(user.token);
+    public String getMessage(chat.User user) { //Receive messages from use message queue
+    	User _user = container.getUser(user.token);
         String message = _user.getMessage();
             if (message != null) {
                 return message;
@@ -53,32 +66,19 @@ class ChatImpl extends ChatPOA { //Server implementation
     }
 
 
-    public String listChatRooms() { //Get All Chat rooms
-            ArrayList<String> chatNames = server.getChatRooms();
-            String str = "Chat Rooms:\n";
-            for (String chatName : chatNames) {
-                str += chatName + "\n";
-            }
-            return str;
-    }
 
-
-
-	public String getName(chat.User user) { //Get user name
-	     return server.getUser(user.token).getName();
-	}
 
 	
-	@Override
+										//Create chat room
 	public boolean createChatRoom(chat.Room room) {
-        server.addChatRoom(room.name);
+        container.addChatRoom(room.name);
         return true;
 	}
 
-	@Override
+									//Add user to chat room
 	public boolean joinChatRoom(chat.User user, chat.Room room) {
-		User _user = server.getUser(user.token);
-        Room chatRoom = server.getChatRoom(room.name);
+		User _user = container.getUser(user.token);
+        Room chatRoom = container.getChatRoom(room.name);
         if (chatRoom != null) {
             chatRoom.addUser(_user);
             return true;
@@ -86,27 +86,54 @@ class ChatImpl extends ChatPOA { //Server implementation
         else return false;
 	}
 
-	@Override
+								//Remove user from chat room
 	public boolean leaveChatRoom(chat.User user) {
-		User _user = server.getUser(user.token);
+		User _user = container.getUser(user.token);
         if (!_user.getChatRoom().equals("")) {
-            String chatName = _user.getChatRoom();
-            Room chatRoom = server.getChatRoom(chatName);
-            chatRoom.removeUser(_user);
+    		container.getChatRoom(_user.getChatRoom()).removeUser(_user);
             return true;
         } 
         else  return false;
-	
 	}
 
-	@Override
+
 	public boolean changeName(chat.User user) {
-		server.getUser(user.token).setName(user.name);
+		container.getUser(user.token).setName(user.name);
         return true;
 	}
 
 
+   public void setORB(ORB orb) { //Orb setter
+        this.orb = orb;
+    }
 
+    public String getToken() { //Add user and receive his token
+        return container.addUser();
+    }
+
+
+	
+	public boolean roomType(chat.User user) {
+		User _user = container.getUser(user.token);
+        if (!_user.getChatRoom().equals("")) {
+    		container.getChatRoom(_user.getChatRoom()).changeType();
+            return true;
+        } 
+        else  return false;
+		
+	}
+
+
+
+	public boolean getRoomType(chat.User user) {
+		User _user = container.getUser(user.token);
+    	return container.getChatRoom(_user.getChatRoom()).getType();
+	}
+
+	public String getRoom(chat.User user) {
+		User _user = container.getUser(user.token);
+    	return _user.getChatRoom();
+	}
 
 }
 

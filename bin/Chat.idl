@@ -20,9 +20,12 @@ struct User{
   
     interface Chat
     {
-        string connect();
+        string getToken();
         void sendMessage(in Message msg);
-        string receiveMessage(in User user);
+        boolean roomType(in User user);
+        string getRoom(in User user);
+        boolean getRoomType(in User user);
+        string getMessage(in User user);
         boolean createChatRoom(in Room room);
         string listChatRooms();
         boolean joinChatRoom(in User user, in Room room);

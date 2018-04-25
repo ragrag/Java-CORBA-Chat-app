@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class User {
 
-    final String token;		//User token, mapped to each user in server Hashmap
+    String token;		//User token, mapped to each user in server Hashmap
     String name;			//User name
     String chatRoom;		//Current user chatRoom
     Queue<String> messages = new LinkedList<String>();//User messeges to print in FIFO
@@ -23,8 +23,7 @@ public class User {
     }
 
     public synchronized String getName() {  //Get User name
-        String name = this.name;
-        return name;
+        return this.name;
     }
 
     public synchronized void setName(String name) {  //Set user name
@@ -32,8 +31,7 @@ public class User {
     }
 
     public synchronized String getChatRoom() {	//Get user current chat room
-        String chatRoom = this.chatRoom;
-        return chatRoom;
+        return this.chatRoom;
     }
 
     public synchronized void setChatRoom(String chatRoom) { //Set user that room
@@ -45,7 +43,6 @@ public class User {
     }
 
     public synchronized String getMessage() { //dequeue message from messages queue
-        String message = messages.poll();
-        return message;
+        return messages.poll();
     }
 }
