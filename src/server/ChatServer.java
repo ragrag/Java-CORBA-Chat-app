@@ -44,7 +44,6 @@ class ChatImpl extends ChatPOA { //Server implementation
             return true;
         } 
         else  return false;
-		
 	}
 
 

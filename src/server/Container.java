@@ -18,7 +18,6 @@ public class Container { //CLass that will act as a container
         try {
 			chatRooms.put(name, new Room(name));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
